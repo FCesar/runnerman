@@ -1,0 +1,41 @@
+{
+  "name": "scdauto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
+    "autotest": "jest --coverage || true",
+    "debug": "node --nolazy --inspect-brk=9229 app.js -c SCD-Auto.postman_collection.json -e SCD-LOCAL.postman_environment.json -s '{\"Ping\":200, \"Obter Token\":200}'"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^5.1.0",
+    "newman": "^5.0.0",
+    "postman-collection": "^3.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.12.1",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-security": "^1.4.0",
+    "jest": "^26.0.1"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ],
+    "*.json": [
+      "prettier --write",
+      "git add"
+    ],
+    "*.md": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}
