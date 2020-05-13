@@ -6,6 +6,8 @@ const { run: newman } = require('newman');
 const { program } = require('commander');
 const { filterCollection } = require('./util/filterCollection');
 const { generateGlobals } = require('./util/generateGlobal');
+const { getFilesInFolderPerExtension } = require("./util/getFilesInFolderPerExtension");
+const { format } = require("util");
 
 
 program
@@ -26,9 +28,12 @@ const collectionDefinition = parseJsonFile(program.collection);
 
 const environment = parseJsonFile(program.environment);
 
-const suites = [ JSON.parse(program.suite) ];
+const suites = getFilesInFolderPerExtension(program.suite, "suite");
 
 suites.forEach(suite => {
+  const name = suite;
+  suite = parseJsonFile(suite);
+
   const globals = generateGlobals(suite);
 
   filteredCollectionDefinition = filterCollection(collectionDefinition, suite);
@@ -39,10 +44,9 @@ suites.forEach(suite => {
       collection: collection,
       environment: environment,
       globals: globals,
-      reporters: 'cli'
   }, function (err, summary) {
       if (err) { throw err; }
-      console.log('Collection run complete!');
+      console.log(format('Suite %s run complete!', name));
   }).on('beforeTest', function (err, summary) {
       var arr = new Array();
       arr[0] = "var config = pm.globals.get(pm.info.requestName);";
