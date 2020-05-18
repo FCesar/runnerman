@@ -34,7 +34,7 @@ describe('Test -> Util -> getFilesInFolderPerExtension', () => {
 
       expect(() => {
         getFilesInFolderPerExtension(path, extension);
-      }).toThrow(new Error(format('%s it\' not a file', path)));
+      }).toThrow();
     })
 
     it('Should return all files suitess', () => {
