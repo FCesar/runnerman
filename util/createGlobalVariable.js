@@ -16,13 +16,21 @@ module.exports = {
                 if(variable.map[a] in response)
                 {
                     const value = response[variable.map[a]];
-                    summary.globals.values.members.push(
-                        new Variable({ 
-                            "key": variable.map[a], 
-                            "type": "any", 
-                            "value": value 
-                        })
-                    );
+                    
+                    const members = summary.globals.values.members;
+                    
+                    if (members.filter(x => x.key === variable.map[a]).length == 0)
+                    {
+                        members.push(
+                            new Variable({ 
+                                "key": variable.map[a], 
+                                "type": "any", 
+                                "value": value 
+                            })
+                        );
+                    }else{
+                        members.filter(x => x.key === variable.map[a])[0].value = value;
+                    }
                 }
             }
         }
