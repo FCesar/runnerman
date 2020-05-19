@@ -18,6 +18,7 @@ program
   .option('-c, --collection <type>')
   .option('-e, --environment <type>')
   .option('-s, --suite <type>')
+  .option('-i, --iterations <type>')
   .parse(process.argv);
 
 if (program.collection === '' ||
@@ -27,22 +28,25 @@ if (program.collection === '' ||
   program.help();
 }
 
-const collectionDefinition = parseJsonFile(program.collection);
-
-const environment = parseJsonFile(program.environment);
-
-const suites = getFilesInFolderPerExtension(program.suite, "suite");
-
-const mutex = new Mutex();
-
-let guid = null;
-
-let assert = 0;
-
 (async function main() {
+  const collectionDefinition = parseJsonFile(program.collection);
+
+  const environment = parseJsonFile(program.environment);
+
+  const suites = getFilesInFolderPerExtension(program.suite, "suite");
+
+  const iterations = parseInt(program.iterations) || 1;
+
+  const mutex = new Mutex();
+
+  let guid = null;
+
+  let assert = 0;
+
   const promises = suites.map(async (suite) => {
     await new Promise((resolve, reject) => {
       mutex.acquire().then(function(release) {
+
         const name = suite;
     
         const suiteObj = parseJsonFile(suite);
@@ -57,11 +61,11 @@ let assert = 0;
             collection: collection,
             environment: environment,
             globals: globals,
-            iterationCount: 1,
+            iterationCount: iterations,
             reporters: [ 'cli' ]
         });
     
-        runner.on('beforeItem', function(err, summary){
+        runner.on('beforeItem', function(err, summary) {
           guid = uuidv4();
         });
     
