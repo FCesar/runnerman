@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const { parseJsonFile } = require('./util/parseJsonFile')
-const { Collection } = require('postman-collection')
+const { Collection, Event, Script } = require('postman-collection')
 const { run: newman } = require('newman');
 const { program } = require('commander');
 const { filterCollection } = require('./util/filterCollection');
@@ -9,6 +9,8 @@ const { generateGlobals } = require('./util/generateGlobal');
 const { getFilesInFolderPerExtension } = require("./util/getFilesInFolderPerExtension");
 const { format } = require("util");
 const { Mutex } = require('async-mutex');
+const { createGlobalVariable } = require("./util/createGlobalVariable");
+const { v4: uuidv4 } = require('uuid');
 
 
 program
@@ -33,37 +35,67 @@ const suites = getFilesInFolderPerExtension(program.suite, "suite");
 
 const mutex = new Mutex();
 
-suites.forEach(suite => {
+let guid = null;
+
+let assert = 0;
+
+for (const suite of suites) {
   mutex.acquire().then(function(release) {
     const name = suite;
-    suite = parseJsonFile(suite);
 
-    const globals = generateGlobals(suite);
+    const suiteObj = parseJsonFile(suite);
 
-    filteredCollectionDefinition = filterCollection(collectionDefinition, suite);
+    const globals = generateGlobals(suiteObj);
 
-    const collection = new Collection(filteredCollectionDefinition).toJSON();
+    filteredCollectionDefinition = filterCollection(collectionDefinition, suiteObj);
 
-    newman({
+    const collection = new Collection(filteredCollectionDefinition);
+
+    const runner = newman({
         collection: collection,
         environment: environment,
         globals: globals,
         reporters: [ 'cli' ]
-    }, function (err, summary) {
-        if (err) { throw err; }
-        console.log(format('Suite %s run complete!', name));
-    }).on('beforeTest', function (err, summary) {
-        var arr = new Array();
-        arr[0] = "var config = pm.globals.get(pm.info.requestName);";
-        arr[1] = "if(config !== undefined)";
-        arr[2] = "{";
-        arr[3] = "    pm.test(\"Status test\", function () {";
-        arr[4] = "        pm.response.to.have.status(config);";
-        arr[5] = "    });";
-        arr[6] = "}";
-        summary.item.events.members.find(element => element.listen == "test").script.exec = summary.item.events.members.find(element => element.listen == "test").script.exec.concat(arr);
-    }).on('done', function (err, summary) {
-        release();
+    });
+
+    runner.on('beforeItem', function(err, summary){
+      guid = uuidv4();
+    });
+
+    runner.on('request', function (err, summary) {
+      const response = summary.response;
+      if (response !== undefined)
+      {
+        const variable = globals.values
+          .filter(x => x.key === summary.item.name)[0].value;
+
+        Object.assign(this.summary, createGlobalVariable(response, summary.item.name, this.summary));
+
+        const rawEvent = {
+            listen: 'test',
+            script: new Script({
+              exec: format('tests["%s"] = %s', guid, new Boolean(summary.response.code === variable.code).toString())
+            })
+        };
+
+        summary.item.events.members.push(new Event(rawEvent));
+      }
+    });
+
+    runner.on('assertation', function (err, summary) {
+      if (err) { assert = 1 }
+    });
+
+    runner.on('exception', function (err, summary) {
+      release();
+      if (err) { throw err; }
+    });
+
+    runner.on('done', function (err, summary) {
+      release();
+      console.log(format('Suite %s run complete!', name));
     });
   });
-});
+}
+
+//process.exit(assert);
