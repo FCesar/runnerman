@@ -78,25 +78,30 @@ if (program.collection === '' ||
     
             Object.assign(this.summary, createGlobalVariable(response, summary.item.name, this.summary));
     
-            const rawEvent = {
+            const event = new Event({
                 listen: 'test',
                 script: new Script({
                   exec: format('tests["%s"] = %s', guid, new Boolean(summary.response.code === variable.code).toString())
                 })
-            };
+            });
     
-            summary.item.events.members.push(new Event(rawEvent));
+            summary.item.events.members.push(event);
           }
         });
     
-        runner.on('assertion', function (err, summary) {
-          if (err) { assert = 1 }
+        runner.on('assertion', function (err) {
+          if (err){
+            assert = 1;
+          }
         });
     
-        runner.on('exception', function (err, summary) {
-          release();
-          reject();
-          if (err) { throw err; }
+        runner.on('exception', function (err) {
+          if (err) {
+            release();
+            reject();
+
+            throw err;
+          }
         });
     
         runner.on('done', function (err, summary) {
