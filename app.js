@@ -39,63 +39,72 @@ let guid = null;
 
 let assert = 0;
 
-for (const suite of suites) {
-  mutex.acquire().then(function(release) {
-    const name = suite;
-
-    const suiteObj = parseJsonFile(suite);
-
-    const globals = generateGlobals(suiteObj);
-
-    filteredCollectionDefinition = filterCollection(collectionDefinition, suiteObj);
-
-    const collection = new Collection(filteredCollectionDefinition);
-
-    const runner = newman({
-        collection: collection,
-        environment: environment,
-        globals: globals,
-        reporters: [ 'cli' ]
-    });
-
-    runner.on('beforeItem', function(err, summary){
-      guid = uuidv4();
-    });
-
-    runner.on('request', function (err, summary) {
-      const response = summary.response;
-      if (response !== undefined)
-      {
-        const variable = globals.values
-          .filter(x => x.key === summary.item.name)[0].value;
-
-        Object.assign(this.summary, createGlobalVariable(response, summary.item.name, this.summary));
-
-        const rawEvent = {
-            listen: 'test',
-            script: new Script({
-              exec: format('tests["%s"] = %s', guid, new Boolean(summary.response.code === variable.code).toString())
-            })
-        };
-
-        summary.item.events.members.push(new Event(rawEvent));
-      }
-    });
-
-    runner.on('assertation', function (err, summary) {
-      if (err) { assert = 1 }
-    });
-
-    runner.on('exception', function (err, summary) {
-      release();
-      if (err) { throw err; }
-    });
-
-    runner.on('done', function (err, summary) {
-      release();
-      console.log(format('Suite %s run complete!', name));
-    });
+(async function main() {
+  const promises = suites.map(async (suite) => {
+    await new Promise((resolve, reject) => {
+      mutex.acquire().then(function(release) {
+        const name = suite;
+    
+        const suiteObj = parseJsonFile(suite);
+    
+        const globals = generateGlobals(suiteObj);
+    
+        filteredCollectionDefinition = filterCollection(collectionDefinition, suiteObj);
+    
+        const collection = new Collection(filteredCollectionDefinition);
+    
+        const runner = newman({
+            collection: collection,
+            environment: environment,
+            globals: globals,
+            iterationCount: 1,
+            reporters: [ 'cli' ]
+        });
+    
+        runner.on('beforeItem', function(err, summary){
+          guid = uuidv4();
+        });
+    
+        runner.on('request', function (err, summary) {
+          const response = summary.response;
+          if (response !== undefined)
+          {
+            const variable = globals.values
+              .filter(x => x.key === summary.item.name)[0].value;
+    
+            Object.assign(this.summary, createGlobalVariable(response, summary.item.name, this.summary));
+    
+            const rawEvent = {
+                listen: 'test',
+                script: new Script({
+                  exec: format('tests["%s"] = %s', guid, new Boolean(summary.response.code === variable.code).toString())
+                })
+            };
+    
+            summary.item.events.members.push(new Event(rawEvent));
+          }
+        });
+    
+        runner.on('assertion', function (err, summary) {
+          if (err) { assert = 1 }
+        });
+    
+        runner.on('exception', function (err, summary) {
+          release();
+          reject();
+          if (err) { throw err; }
+        });
+    
+        runner.on('done', function (err, summary) {
+          release();
+          console.log(format('Suite %s run complete!', name));
+          resolve()
+        });
+      })
+    })
   });
-}
 
-//process.exit(assert);
+  await Promise.all(promises)
+
+  process.exit(assert);
+})();
