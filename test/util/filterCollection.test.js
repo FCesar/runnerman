@@ -14,6 +14,7 @@ describe('Test -> Util -> filterCollection', () => {
 
             return collectionDefinition; 
         });
+        
         const suites = { "item1": null }
         const result = filterCollection(collectionDefinition, suites);
 
@@ -30,6 +31,8 @@ describe('Test -> Util -> filterCollection', () => {
             return collectionDefinition; 
         });
         
+        const suites = { }
+
         expect(() => {
             filterCollection(collectionDefinition, suites)
         }).toThrow();
