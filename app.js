@@ -31,7 +31,7 @@ if (program.collection === '' ||
 (async function main() {
   const collectionDefinition = parseJsonFile(program.collection);
 
-  const environment = parseJsonFile(program.environment);
+  const environment = program.environment !== undefined && parseJsonFile(program.environment);
 
   const suites = getFilesInFolderPerExtension(program.suite, "suite");
 
