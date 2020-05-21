@@ -9,12 +9,8 @@ require("newman/lib/run/options");
 describe('Test -> Util -> createGlobalVariable', () => { 
     it('Should add new global variables', () => {
     
-        const responseBody = "{ \"b\": \"c\" }";
-
-        let b = Buffer.from(responseBody, 'utf-8');
-
-        const responseDefinition = {
-            "stream" : b
+        const responseBody = {
+            "b" : "c"
         };
 
         const runSummary = { 
@@ -42,19 +38,15 @@ describe('Test -> Util -> createGlobalVariable', () => {
 
         expected.push({ "key": "b", "type": "any", "value": "c" });
 
-        const result = createGlobalVariable(responseDefinition, methodName, runSummary);
+        const result = createGlobalVariable(responseBody, methodName, runSummary);
 
         expect(result.globals.values.members).toEqual(expected);
     })
 
     it('Should update global variables', () => {
     
-        const responseBody = "{ \"b\": \"c\" }";
-
-        let b = Buffer.from(responseBody, 'utf-8');
-
-        const responseDefinition = {
-            "stream" : b
+        const responseBody = {
+            "b" : "c"
         };
 
         const runSummary = { 
@@ -86,7 +78,7 @@ describe('Test -> Util -> createGlobalVariable', () => {
         expected.splice(expected.indexOf(a), 1);
         expected.push(a);
 
-        const result = createGlobalVariable(responseDefinition, methodName, runSummary);
+        const result = createGlobalVariable(responseBody, methodName, runSummary);
 
         expect(result.globals.values.members).toEqual(expected);
     })

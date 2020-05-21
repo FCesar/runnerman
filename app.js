@@ -64,28 +64,43 @@ if (program.collection === '' ||
             iterationCount: iterations,
             reporters: [ 'cli' ]
         });
-    
+
         runner.on('beforeItem', function(err, summary) {
           guid = uuidv4();
+
+          if(suiteObj[summary.item.name].data !== undefined)
+          {
+            //TODO: Remover this variables in "item"
+            Object.assign(this.summary,
+              createGlobalVariable(suiteObj[summary.item.name].data, summary.item.name, this.summary));
+          }
         });
-    
+
         runner.on('request', function (err, summary) {
           const response = summary.response;
           if (response !== undefined)
           {
+            const buffer = response.stream;
+
             const variable = globals.values
               .filter(x => x.key === summary.item.name)[0].value;
-    
-            Object.assign(this.summary, createGlobalVariable(response, summary.item.name, this.summary));
     
             const event = new Event({
                 listen: 'test',
                 script: new Script({
-                  exec: format('tests["%s"] = %s', guid, new Boolean(summary.response.code === variable.code).toString())
+                  exec: format('tests["%s"] = %s',
+                    guid,
+                    new Boolean(summary.response.code === variable.code).toString())
                 })
             });
     
             summary.item.events.members.push(event);
+
+            if (summary.response.code === variable.code && buffer.byteLength > 0)
+            {
+              Object.assign(this.summary,
+                createGlobalVariable(JSON.parse(buffer.toString()), summary.item.name, this.summary));
+            }
           }
         });
     
