@@ -1,4 +1,4 @@
-const { createGlobalVariable } = require("../../util/createGlobalVariable");
+const { createGlobalVariable } = require("../../lib/util/createGlobalVariable");
 const { define, create, createListOf } = require('autofixture');
 const { Response } = require('postman-collection/lib/index');
 const { VariableScope } = require('postman-collection/lib/collection/variable-scope').VariableScope;

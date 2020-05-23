@@ -1,13 +1,14 @@
 {
   "name": "spaceman",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
-  "main": "app.js",
+  "main": "index.js",
+  "bin": {
+    "spaceman": "./bin/spaceman.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint .",
-    "autotest": "jest --coverage || true",
-    "debug": "node --nolazy --inspect-brk=9229 app.js -c SCD-Auto.postman_collection.json -e SCD-LOCAL.postman_environment.json -s '{\"Ping\":200, \"Obter Token\":200}'"
+    "test": "jest --coverage || true",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC",

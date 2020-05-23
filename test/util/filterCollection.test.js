@@ -1,4 +1,4 @@
-const { filterCollection } = require("../../util/filterCollection");
+const { filterCollection } = require("../../lib/util/filterCollection");
 const { define, create, createListOf } = require('autofixture');
 const { Collection } = require('postman-collection')
 
