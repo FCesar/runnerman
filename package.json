@@ -13,7 +13,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "async-mutex": "^0.2.2",
     "commander": "^5.1.0",
     "newman": "^5.0.0",
     "postman-collection": "^3.6.0",
