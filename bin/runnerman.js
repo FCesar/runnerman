@@ -30,12 +30,20 @@ program
 
   const suites = getFilesInFolderPerExtension(program.suite, "suite");
 
+  const summaries = [];
+
   for(const suite of suites) {
-    await runnerman({
+    const summary = await runnerman({
       "name": suite,
       "obj": parseJsonFile(suite)
     }, collection, environment, iterations);
+    summaries.push(summary);
   };
 
-  process.exit(0);
+  let exitCode = 0;
+
+  if (summaries.every(x => x.run.failures.length > 0))
+    exitCode = 1
+
+  process.exit(exitCode);
 })(program);
