@@ -1,7 +1,7 @@
 {
   "name": "runnerman",
   "version": "0.1.0",
-  "description": "",
+  "description": "A simple way test your apis.",
   "main": "index.js",
   "bin": {
     "runnerman": "./bin/runnerman.js"
@@ -10,8 +10,12 @@
     "test": "jest --coverage || true",
     "lint": "eslint ."
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Fernando Cesar da Silva <fcgpsjob@gmail.com>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FCesar/runnerman"
+  },
   "dependencies": {
     "commander": "^5.1.0",
     "newman": "^5.0.0",
