@@ -1,10 +1,5 @@
 const { createGlobalVariable } = require("../../lib/util/createGlobalVariable");
-const { define, create, createListOf } = require('autofixture');
-const { Response } = require('postman-collection/lib/index');
-const { VariableScope } = require('postman-collection/lib/collection/variable-scope').VariableScope;
-require("newman/lib/run/options");
-
-
+const { Variable } = require("postman-collection");
 
 describe('Test -> Util -> createGlobalVariable', () => { 
     it('Should add new global variables', () => {
@@ -17,28 +12,28 @@ describe('Test -> Util -> createGlobalVariable', () => {
             "globals" : { 
                 "values" : { 
                     "members" : [ 
-                        { 
+                        new Variable({
                             "key": "Ping",
                             "type": "any",
                             value: { "code": 200, "map": ["b"] } 
-                        },
-                        { 
+                        }),
+                        new Variable({
                             "key": "HealthCheck",
                             "type": "any",
                             value: { "code": 200 } 
-                        } 
+                        })
                     ] 
                 } 
             } 
         };
 
-        const methodName = "Ping";
+        const position = 0;
 
         const expected = Object.assign([], runSummary.globals.values.members);
 
         expected.push({ "key": "b", "type": "any", "value": "c" });
 
-        const result = createGlobalVariable(responseBody, methodName, runSummary);
+        const result = createGlobalVariable(responseBody, position, runSummary);
 
         expect(result.globals.values.members).toEqual(expected);
     })
@@ -53,22 +48,22 @@ describe('Test -> Util -> createGlobalVariable', () => {
             "globals" : { 
                 "values" : { 
                     "members" : [ 
-                        { 
+                        new Variable({
                             "key": "Ping",
                             "type": "any",
                             value: { "code": 200, "map": ["b"] } 
-                        },
-                        { 
+                        }),
+                        new Variable({
                             "key": "b",
                             "type": "any",
                             value: "d" 
-                        } 
+                        })
                     ] 
                 } 
             } 
         };
 
-        const methodName = "Ping";
+        const position = 0;
 
         const expected = Object.assign([], runSummary.globals.values.members);
 
@@ -78,7 +73,7 @@ describe('Test -> Util -> createGlobalVariable', () => {
         expected.splice(expected.indexOf(a), 1);
         expected.push(a);
 
-        const result = createGlobalVariable(responseBody, methodName, runSummary);
+        const result = createGlobalVariable(responseBody, position, runSummary);
 
         expect(result.globals.values.members).toEqual(expected);
     })

@@ -1,5 +1,5 @@
 const { filterCollection } = require("../../lib/util/filterCollection");
-const { define, create, createListOf } = require('autofixture');
+const { define, create } = require('autofixture');
 const { Collection } = require('postman-collection')
 
 jest.mock('fs');
@@ -15,7 +15,7 @@ describe('Test -> Util -> filterCollection', () => {
             return collectionDefinition; 
         });
         
-        const suites = { "item1": null }
+        const suites = [ { "item1": null } ]
         const result = filterCollection(collectionDefinition, suites);
 
         expect(result.item).toEqual([ { "name": "item1"} ]);
@@ -31,7 +31,7 @@ describe('Test -> Util -> filterCollection', () => {
             return collectionDefinition; 
         });
         
-        const suites = { }
+        const suites = []
 
         expect(() => {
             filterCollection(collectionDefinition, suites)

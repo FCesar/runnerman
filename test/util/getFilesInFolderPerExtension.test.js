@@ -1,5 +1,4 @@
 const { getFilesInFolderPerExtension } = require("../../lib/util/getFilesInFolderPerExtension");
-const { format } = require("util");
 
 jest.mock('fs');
 
