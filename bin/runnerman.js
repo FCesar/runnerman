@@ -2,7 +2,7 @@
 
 const { parseJsonFile } = require('../lib/util/parseJsonFile')
 const { getFilesInFolderPerExtension } = require("../lib/util/getFilesInFolderPerExtension");
-const { spaceman } = require("../");
+const { runnerman } = require("..");
 const { program } = require('commander');
 const { version } = require('../package.json');
 
@@ -31,7 +31,7 @@ program
   const suites = getFilesInFolderPerExtension(program.suite, "suite");
 
   for(const suite of suites) {
-    await spaceman({
+    await runnerman({
       "name": suite,
       "obj": parseJsonFile(suite)
     }, collection, environment, iterations);

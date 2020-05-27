@@ -1,10 +1,10 @@
 {
-  "name": "spaceman",
+  "name": "runnerman",
   "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "bin": {
-    "spaceman": "./bin/spaceman.js"
+    "runnerman": "./bin/runnerman.js"
   },
   "scripts": {
     "test": "jest --coverage || true",
