@@ -42,7 +42,7 @@ program
 
   let exitCode = 0;
 
-  if (summaries.every(x => x.run.failures.length > 0))
+  if (summaries.some(x => x.run.failures.length > 0))
     exitCode = 1
 
   process.exit(exitCode);
