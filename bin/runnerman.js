@@ -14,28 +14,29 @@ program
   .option('-i, --iterations <type>')
   .parse(process.argv);
 
-(async function main(program) {
-  if (program.collection === '' ||
+(async (program) => {
+  if (program.collection === undefined || program.collection === '' ||
       program.environment === '' ||
-      program.suite === '')
+      program.suite === undefined || program.suite === '')
   {
     program.help();
   }
 
-  const collection = parseJsonFile(program.collection);
+  const collection = await parseJsonFile(program.collection);
 
-  const environment = program.environment !== undefined && parseJsonFile(program.environment);
+  const environment = program.environment !== undefined ? await parseJsonFile(program.environment) : {};
 
   const iterations = parseInt(program.iterations) || 1;
 
-  const suites = getFilesInFolderPerExtension(program.suite, "suite");
+  const suites = await getFilesInFolderPerExtension(program.suite, "suite");
+
 
   const summaries = [];
 
   for(const suite of suites) {
     const summary = await runnerman({
       "name": suite,
-      "obj": parseJsonFile(suite)
+      "obj": await parseJsonFile(suite)
     }, collection, environment, iterations);
     summaries.push(summary);
   };
@@ -46,4 +47,6 @@ program
     exitCode = 1
 
   process.exit(exitCode);
-})(program);
+})(program)
+  .then(x => console.log(x))
+  .catch((err) => console.log(err));
