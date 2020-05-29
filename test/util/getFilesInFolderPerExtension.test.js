@@ -1,53 +1,71 @@
+const fs = require("fs");
+jest.mock("fs");
+
 const { getFilesInFolderPerExtension } = require("../../lib/util/getFilesInFolderPerExtension");
 
-jest.mock('fs');
+describe('Test -> Util -> getFilesInFolderPerExtension', () => {
+    it('Should return all files with extension suite', async () => {
 
-describe('Test -> Util -> getFilesInFolderPerExtension', () => { 
-    it('Should return all files with extension suite', () => {
-
-      const MOCK_FILE_INFO = {
-        '/path/to/file1.js': 'console.log("file1 contents");',
-        '/path/to/file2.txt': 'file2 contents',
-        '/path/to/suite1.suite': 'file2 contents',
-        '/path/to/suite2.suite': 'file2 contents'
+      const mockFiles = {
+        "/path/to": [
+          '/path/to/suite1.suite',
+          '/path/to/suite2.suite'
+        ]
       };
 
-      require('fs').__setMockFiles(MOCK_FILE_INFO);
-              
-        const path = "/path/to";
-        const extension = "suite"
-        const result = getFilesInFolderPerExtension(path, extension);
-        
-        expect(result.length).toBe(2);
+      fs.stat.mockImplementationOnce(
+        jest.fn((_, callback) => callback(undefined, { isDirectory: () => true }))
+      );
+
+      fs.readdir.mockImplementationOnce(
+        jest.fn((path, callback) => callback(undefined, mockFiles[path]))
+      );
+
+      const path = "/path/to";
+      const extension = "suite"
+      const promise = getFilesInFolderPerExtension(path, extension);
+
+      await promise.then(data => expect(data.length).toBe(2));
     }),
 
-    it('Should return all files suites', () => {
+    it('Should stat throw any error', async () => {
 
-      const MOCK_FILE_INFO = {
-      };
+      const expectedError = "Test error message";
+      fs.stat.mockImplementationOnce(
+        jest.fn((_, callback) => callback("Test error message"))
+      );
 
-      require('fs').__setMockFiles(MOCK_FILE_INFO);
-              
       const path = "/path/to";
       const extension = "suite"
 
-      expect(() => {
-        getFilesInFolderPerExtension(path, extension);
-      }).toThrow();
+      var promise = getFilesInFolderPerExtension(path, extension);
+
+      await expect(promise).rejects.toEqual(expectedError);
     })
 
-    it('Should return all files suitess', () => {
+    it('Should return list with on file if file is suite', async () => {
 
-      const MOCK_FILE_INFO = {
-        '/path/to/file1.suite': 'console.log("file1 contents");',
-      };
+      fs.stat.mockImplementationOnce(
+        jest.fn((_, callback) => callback(undefined, { isDirectory: () => false }))
+      );
 
-      require('fs').__setMockFiles(MOCK_FILE_INFO);
-              
       const path = "file1.suite";
       const extension = "suite"
-      const result = getFilesInFolderPerExtension(path, extension);
-      
-      expect(result.length).toBe(1);
+      const promise = getFilesInFolderPerExtension(path, extension);
+
+      await promise.then(data => expect(data.length).toBe(1));
+    })
+
+    it('Should throw error if path not suite file or directory', async () => {
+
+      fs.stat.mockImplementationOnce(
+        jest.fn((_, callback) => callback(undefined, { isDirectory: () => false }))
+      );
+
+      const path = "file1.txt";
+      const extension = "suite"
+      const promise = getFilesInFolderPerExtension(path, extension);
+
+      await expect(promise).rejects.toThrow();
     })
 });
