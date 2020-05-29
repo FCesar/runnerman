@@ -15,7 +15,7 @@ describe("Util", () => {
       
       const promise = parseJsonFile(path);
 
-      return expect(promise).rejects.toEqual(expectedError);
+      await expect(promise).rejects.toEqual(expectedError);
     });
 
     it("Should throw error when path is not a file", async () => {
@@ -28,7 +28,7 @@ describe("Util", () => {
 
       const promise = parseJsonFile(path);
 
-      return expect(promise).rejects.toEqual(expectedError);
+      await expect(promise).rejects.toEqual(expectedError);
     });
 
     it("Should returned json parsed content from file read", async () => {
@@ -38,14 +38,14 @@ describe("Util", () => {
       );
       fs.readFile.mockImplementationOnce(
         jest.fn((_, callback) =>
-          callback(undefined, JSON.stringify({ key: "value" }))
+          callback(undefined, JSON.stringify(expectedResponse))
         )
       );
       const path = "/testFolder";
 
       const promise = parseJsonFile(path);
 
-      return expect(promise).resolves.toEqual(expectedResponse);
+      await expect(promise).resolves.toEqual(expectedResponse);
     });
   });
 });
