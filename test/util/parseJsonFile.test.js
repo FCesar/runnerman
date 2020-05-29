@@ -12,8 +12,7 @@ describe("Util", () => {
       );
 
       const path = "/testFolder";
-      //OLLHA ESSA LINHA
-      // yus
+      
       const promise = parseJsonFile(path);
 
       return expect(promise).rejects.toEqual(expectedError);
