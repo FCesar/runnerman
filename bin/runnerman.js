@@ -36,7 +36,7 @@ program
 
   for(const item of program.suite) {
     var items = await getFilesInFolderPerExtension(item, "suite");
-    suites.add(items);
+    items.forEach(x => suites.add(x));
   };
 
   const summaries = [];
