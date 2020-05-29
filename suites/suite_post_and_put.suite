@@ -1,0 +1,4 @@
+[
+	{ "Test Post": { "code": 200, "map": ["json"] } },
+	{ "Test Put": { "code": 200 } }
+]
