@@ -6,18 +6,22 @@ const { runnerman } = require("..");
 const { program } = require('commander');
 const { version } = require('../package.json');
 
+function collect(value, previous) {
+  return previous.concat([value]);
+}
+
 program
   .version(version)
   .option('-c, --collection <type>')
   .option('-e, --environment <type>')
-  .option('-s, --suite <type>')
+  .option('-s, --suite <value>', '', collect, [])
   .option('-i, --iterations <type>')
   .parse(process.argv);
 
 (async function main(program) {
   if (program.collection === '' ||
       program.environment === '' ||
-      program.suite === '')
+      program.suite === undefined || program.suite.length === 0)
   {
     program.help();
   }
@@ -28,7 +32,12 @@ program
 
   const iterations = parseInt(program.iterations) || 1;
 
-  const suites = getFilesInFolderPerExtension(program.suite, "suite");
+  const suites = new Set();
+
+  for(const item of program.suite) {
+    var items = await getFilesInFolderPerExtension(item, "suite");
+    suites.add(items);
+  };
 
   const summaries = [];
 
@@ -42,7 +51,7 @@ program
 
   let exitCode = 0;
 
-  if (summaries.some(x => x.run.failures.length > 0))
+  if (summaries.some(y => y.run.failures.length > 0))
     exitCode = 1
 
   process.exit(exitCode);
