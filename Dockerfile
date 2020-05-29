@@ -9,5 +9,5 @@ FROM node:12.14.0-slim as base
 FROM base as development
     ENV NODE_ENV development
 
-    ENTRYPOINT ["./bin/runnerman.js", "-c runnerman-collection.postman_collection.json", "-s suites/"]
+    ENTRYPOINT ["./bin/runnerman.js", "-c", "runnerman-collection.postman_collection.json", "-s", "suites/"]
 
