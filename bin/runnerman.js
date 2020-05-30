@@ -21,7 +21,8 @@ program
 (async function main(program) {
   if (program.collection === '' ||
       program.environment === '' ||
-      program.suite === undefined || program.suite.length === 0)
+      program.suite === undefined ||
+      program.suite.length === 0)
   {
     program.help();
   }
@@ -51,8 +52,9 @@ program
 
   let exitCode = 0;
 
-  if (summaries.some(y => y.run.failures.length > 0))
+  if (summaries.some(y => y.run.failures.length > 0)) {
     exitCode = 1
+  }
 
   process.exit(exitCode);
 })(program);
