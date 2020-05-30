@@ -1,60 +1,78 @@
 #!/usr/bin/env node
 
-const { parseJsonFile } = require('../lib/util/parseJsonFile')
-const { getFilesInFolderPerExtension } = require("../lib/util/getFilesInFolderPerExtension");
-const { runnerman } = require("..");
 const { program } = require('commander');
+const { parseJsonFile } = require('../lib/util/parseJsonFile');
+const { getFilesInFolderPerExtension } = require('../lib/util/getFilesInFolderPerExtension');
+const { awaitLast } = require('../lib/util/awaitLast');
+const { runnerman } = require('..');
 const { version } = require('../package.json');
 
 function collect(value, previous) {
-  return previous.concat([value]);
+    return previous.concat([value]);
 }
 
 program
-  .version(version)
-  .option('-c, --collection <type>')
-  .option('-e, --environment <type>')
-  .option('-s, --suite <value>', '', collect, [])
-  .option('-i, --iterations <type>')
-  .parse(process.argv);
+    .version(version, '-v, --version')
+    .requiredOption('-c, --collection <type>')
+    .option('-e, --environment <value>')
+    .option('-s, --suite <value>', '', collect, [])
+    .option('-i, --iterations <number>')
+    .option('-p, --parallelize')
+    .parse(process.argv);
 
-(async function main(program) {
-  if (program.collection === '' ||
-      program.environment === '' ||
-      program.suite === undefined ||
-      program.suite.length === 0)
-  {
-    program.help();
-  }
+(async function main(option) {
+    if (option.collection === '' ||
+      option.environment === '' ||
+      option.suite.length === 0) {
+        option.help();
+    }
 
-  const collection = parseJsonFile(program.collection);
+    const collection = parseJsonFile(option.collection);
 
-  const environment = program.environment !== undefined && parseJsonFile(program.environment);
+    const environment = option.environment && parseJsonFile(option.environment);
 
-  const iterations = parseInt(program.iterations) || 1;
+    const iterations = parseInt(option.iterations, 10) || 1;
 
-  const suites = new Set();
+    const items = [];
 
-  for(const item of program.suite) {
-    var items = await getFilesInFolderPerExtension(item, "suite");
-    items.forEach(x => suites.add(x));
-  };
+    for (const item of option.suite) {
+        items.push(getFilesInFolderPerExtension(item, 'suite'));
+    }
 
-  const summaries = [];
+    await Promise.all(items);
 
-  for(const suite of suites) {
-    const summary = await runnerman({
-      "name": suite,
-      "obj": parseJsonFile(suite)
-    }, collection, environment, iterations);
-    summaries.push(summary);
-  };
+    const suites = new Set();
 
-  let exitCode = 0;
+    // TODO:  Verify if exist batter approach
+    items.forEach(element => element.forEach(x => suites.add(x)));
 
-  if (summaries.some(y => y.run.failures.length > 0)) {
-    exitCode = 1
-  }
+    const summaries = [];
 
-  process.exit(exitCode);
-})(program);
+    const resolveds = [];
+
+    if (option.parallelize) {
+        for (const suite of suites) {
+            // eslint-disable-next-line no-await-in-loop
+            const summary = runnerman({
+                name: suite,
+                obj: parseJsonFile(suite)
+            }, collection, environment, iterations);
+            summaries.push(summary);
+        }
+        Object.assign(resolveds, await awaitLast(summaries, []));
+    } else {
+        for (const suite of suites) {
+            // eslint-disable-next-line no-await-in-loop
+            const summary = await runnerman({
+                name: suite,
+                obj: parseJsonFile(suite)
+            }, collection, environment, iterations);
+            summaries.push(summary);
+        }
+        Object.assign(resolveds, summaries);
+    }
+
+    if (resolveds.some(y => y.run.failures.length > 0)) {
+        process.exit(1);
+    }
+}(program));
