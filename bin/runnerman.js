@@ -33,7 +33,7 @@ program
 
   const suites = new Set();
 
-  for(const item of program.suite) {
+  for (const item of program.suite) {
     var items = await getFilesInFolderPerExtension(item, "suite");
     items.forEach(x => suites.add(x));
   };
