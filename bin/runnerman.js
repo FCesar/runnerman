@@ -14,7 +14,7 @@ program
   .option('-i, --iterations <type>')
   .parse(process.argv);
 
-(async (program) => {
+module.exports.main = async (program) => {
   if (program.collection === undefined || program.collection === '' ||
       program.environment === '' ||
       program.suite === undefined || program.suite === '')
@@ -47,6 +47,13 @@ program
     exitCode = 1
 
   process.exit(exitCode);
-})(program)
-  .then(x => console.log(x))
-  .catch((err) => console.log(err));
+}
+
+(async (program) => {
+  try {
+      const result = await module.exports.main(program);
+      console.log(result);
+  } catch (error) {
+      console.error(error);
+  }
+})(program);
