@@ -6,9 +6,7 @@ const { runnerman } = require("..");
 const { program } = require('commander');
 const { version } = require('../package.json');
 
-function collect(value, previous) {
-  return previous.concat([value]);
-}
+const collect = (value, previous) => previous.concat([value]);
 
 program
   .version(version)
