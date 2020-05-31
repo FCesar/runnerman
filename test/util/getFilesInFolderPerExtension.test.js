@@ -27,7 +27,6 @@ describe('Test -> Util -> getFilesInFolderPerExtension', () => {
 
       await promise.then(data => expect(data.length).toBe(2));
     }),
-
     it('Should stat throw any error', async () => {
 
       const expectedError = "Test error message";
