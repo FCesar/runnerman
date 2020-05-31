@@ -7,9 +7,7 @@ const { runnerman } = require('..');
 const { awaitLast } = require('../lib/util/awaitLast');
 const { version } = require('../package.json');
 
-function collect(value, previous) {
-    return previous.concat([value]);
-}
+const collect = (value, previous) => previous.concat([value]);
 
 program
     .version(version, '-v, --version')
@@ -75,4 +73,5 @@ program
     if (resolveds.some(y => y.run.failures.length > 0)) {
         process.exit(1);
     }
-}(program));
+
+})(program);
