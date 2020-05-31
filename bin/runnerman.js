@@ -73,5 +73,4 @@ program
     if (resolveds.some(y => y.run.failures.length > 0)) {
         process.exit(1);
     }
-
-})(program);
+}(program));
