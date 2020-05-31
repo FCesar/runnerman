@@ -1,3 +1,9 @@
+/* eslint-disable no-redeclare */
+/* eslint-disable block-scoped-var */
+/* eslint-disable vars-on-top */
+/* eslint-disable no-var */
+/* eslint-disable no-shadow */
+/* eslint-disable no-restricted-syntax */
 const path = require('path');
 
 const fs = jest.genMockFromModule('fs');
@@ -8,9 +14,11 @@ const fs = jest.genMockFromModule('fs');
 let mockFiles = Object.create(null);
 let mockFilesStats = Object.create(null);
 
+// eslint-disable-next-line no-underscore-dangle
 function __setMockFiles(newMockFiles) {
     mockFiles = Object.create(null);
     mockFilesStats = [];
+    // eslint-disable-next-line guard-for-in
     for (const file in newMockFiles) {
         const dir = path.dirname(file);
 
@@ -48,6 +56,7 @@ function lstatSync(path) {
     return mockFilesStats[path];
 }
 
+// eslint-disable-next-line no-underscore-dangle
 fs.__setMockFiles = __setMockFiles;
 fs.readdirSync = readdirSync;
 fs.existsSync = existsSync;
