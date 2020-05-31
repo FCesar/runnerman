@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
+const { program } = require('commander');
 const { parseJsonFile } = require('../lib/util/parseJsonFile');
 const { getFilesInFolderPerExtension } = require('../lib/util/getFilesInFolderPerExtension');
 const { runnerman } = require('..');
-const { program } = require('commander');
 const { version } = require('../package.json');
 
 program
@@ -14,29 +14,30 @@ program
     .option('-i, --iterations <type>')
     .parse(process.argv);
 
-module.exports.main = async (program) => {
-  if (program.collection === undefined || program.collection === '' ||
-      program.environment === '' ||
-      program.suite === undefined || program.suite === '')
-  {
-    program.help();
-  }
+module.exports.main = async option => {
+    if (option.collection === undefined || option.collection === '' ||
+      option.environment === '' ||
+      option.suite === undefined || option.suite === '') {
+        option.help();
+    }
 
-  const collection = await parseJsonFile(program.collection);
+    const collection = await parseJsonFile(option.collection);
 
-  const environment = program.environment !== undefined ? await parseJsonFile(program.environment) : {};
+    const environment = option.environment !== undefined ? await parseJsonFile(option.environment) : {};
 
-    const iterations = parseInt(program.iterations) || 1;
+    const iterations = parseInt(option.iterations, 10) || 1;
 
-  const suites = await getFilesInFolderPerExtension(program.suite, "suite");
+    const suites = await getFilesInFolderPerExtension(option.suite, 'suite');
 
 
     const summaries = [];
 
     for (const suite of suites) {
+        // eslint-disable-next-line no-await-in-loop
         const summary = await runnerman(
             {
                 name: suite,
+                // eslint-disable-next-line no-await-in-loop
                 obj: await parseJsonFile(suite)
             },
             collection,
@@ -48,16 +49,16 @@ module.exports.main = async (program) => {
 
     let exitCode = 0;
 
-    if (summaries.some((x) => x.run.failures.length > 0)) exitCode = 1;
+    if (summaries.some(x => x.run.failures.length > 0)) exitCode = 1;
 
-  process.exit(exitCode);
-}
+    process.exit(exitCode);
+};
 
-(async (program) => {
-  try {
-      const result = await module.exports.main(program);
-      console.log(result);
-  } catch (error) {
-      console.error(error);
-  }
+(async option => {
+    try {
+        const result = await module.exports.main(option);
+        console.log(result);
+    } catch (error) {
+        console.error(error);
+    }
 })(program);
