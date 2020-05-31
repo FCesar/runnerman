@@ -19,9 +19,7 @@ program
     .parse(process.argv);
 
 (async function main(option) {
-    if (option.collection === '' ||
-      option.environment === '' ||
-      option.suite.length === 0) {
+    if (option.collection === '' || option.environment === '' || option.suite.length === 0) {
         option.help();
     }
 
@@ -42,35 +40,43 @@ program
     const suites = new Set();
 
     // TODO:  Verify if exist batter approach
-    items.forEach(element => element.forEach(x => suites.add(x)));
+    items.forEach((element) => element.forEach((x) => suites.add(x)));
 
     const summaries = [];
 
-    const resolveds = [];
+    const revolvedPromises = [];
 
     if (option.parallelize) {
         for (const suite of suites) {
-            // eslint-disable-next-line no-await-in-loop
-            const summary = runnerman({
-                name: suite,
-                obj: parseJsonFile(suite)
-            }, collection, environment, iterations);
+            const summary = runnerman(
+                {
+                    name: suite,
+                    obj: parseJsonFile(suite)
+                },
+                collection,
+                environment,
+                iterations
+            );
             summaries.push(summary);
         }
-        Object.assign(resolveds, await awaitLast(summaries, []));
+        Object.assign(revolvedPromises, await awaitLast(summaries, []));
     } else {
-        for (const suite of suites) {
-            // eslint-disable-next-line no-await-in-loop
-            const summary = await runnerman({
-                name: suite,
-                obj: parseJsonFile(suite)
-            }, collection, environment, iterations);
+        for await (const suite of suites) {
+            const summary = await runnerman(
+                {
+                    name: suite,
+                    obj: parseJsonFile(suite)
+                },
+                collection,
+                environment,
+                iterations
+            );
             summaries.push(summary);
         }
-        Object.assign(resolveds, summaries);
+        Object.assign(revolvedPromises, summaries);
     }
 
-    if (resolveds.some(y => y.run.failures.length > 0)) {
+    if (revolvedPromises.some((y) => y.run.failures.length > 0)) {
         process.exit(1);
     }
-}(program));
+})(program);
