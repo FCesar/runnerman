@@ -6,18 +6,22 @@ const { getFilesInFolderPerExtension } = require('../lib/util/getFilesInFolderPe
 const { runnerman } = require('..');
 const { version } = require('../package.json');
 
-program
-    .version(version)
-    .option('-c, --collection <type>')
-    .option('-e, --environment <type>')
-    .option('-s, --suite <type>')
-    .option('-i, --iterations <type>')
-    .parse(process.argv);
+const main = async option => {
+    program
+        .version(version)
+        .option('-c, --collection <type>')
+        .option('-e, --environment <type>')
+        .option('-s, --suite <type>')
+        .option('-i, --iterations <type>')
+        .parse(process.argv);
 
-module.exports.main = async option => {
-    if (option.collection === undefined || option.collection === '' ||
-      option.environment === '' ||
-      option.suite === undefined || option.suite === '') {
+    if (
+        option.collection === undefined ||
+        option.collection === '' ||
+        option.environment === '' ||
+        option.suite === undefined ||
+        option.suite === ''
+    ) {
         option.help();
     }
 
@@ -29,15 +33,12 @@ module.exports.main = async option => {
 
     const suites = await getFilesInFolderPerExtension(option.suite, 'suite');
 
-
     const summaries = [];
 
-    for (const suite of suites) {
-        // eslint-disable-next-line no-await-in-loop
+    for await (const suite of suites) {
         const summary = await runnerman(
             {
                 name: suite,
-                // eslint-disable-next-line no-await-in-loop
                 obj: await parseJsonFile(suite)
             },
             collection,
@@ -47,18 +48,17 @@ module.exports.main = async option => {
         summaries.push(summary);
     }
 
-    let exitCode = 0;
-
-    if (summaries.some(x => x.run.failures.length > 0)) exitCode = 1;
+    const exitCode = summaries.some(x => x.run.failures.length > 0) ? 1 : 0;
 
     process.exit(exitCode);
 };
 
-(async option => {
+// Main call
+(async () => {
     try {
-        const result = await module.exports.main(option);
+        const result = await main();
         console.log(result);
     } catch (error) {
         console.error(error);
     }
-})(program);
+})();
