@@ -17,7 +17,7 @@ function __setMockFiles(newMockFiles) {
         if (!mockFiles[dir]) {
             mockFiles[dir] = [];
 
-            var stats = jest.fn((path) => path);
+            var stats = jest.fn(path => path);
             stats.isFile = jest.fn(() => false);
 
             mockFilesStats[dir] = stats;
@@ -26,7 +26,7 @@ function __setMockFiles(newMockFiles) {
         const name = path.basename(file);
 
         if (!mockFilesStats[name]) {
-            var stats = jest.fn((path) => path);
+            var stats = jest.fn(path => path);
             stats.isFile = jest.fn(() => true);
 
             mockFilesStats[name] = stats;
