@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const { parseJsonFile } = require('../lib/util/parseJsonFile')
-const { getFilesInFolderPerExtension } = require("../lib/util/getFilesInFolderPerExtension");
-const { runnerman } = require("..");
+const { parseJsonFile } = require('../lib/util/parseJsonFile');
+const { getFilesInFolderPerExtension } = require('../lib/util/getFilesInFolderPerExtension');
+const { runnerman } = require('..');
 const { program } = require('commander');
 const { version } = require('../package.json');
 
@@ -25,11 +25,11 @@ program
     program.help();
   }
 
-  const collection = parseJsonFile(program.collection);
+    const collection = parseJsonFile(program.collection);
 
-  const environment = program.environment !== undefined && parseJsonFile(program.environment);
+    const environment = program.environment !== undefined && parseJsonFile(program.environment);
 
-  const iterations = parseInt(program.iterations) || 1;
+    const iterations = parseInt(program.iterations) || 1;
 
   const suites = new Set();
 
@@ -38,21 +38,26 @@ program
     items.forEach(x => suites.add(x));
   };
 
-  const summaries = [];
+    const summaries = [];
 
-  for(const suite of suites) {
-    const summary = await runnerman({
-      "name": suite,
-      "obj": parseJsonFile(suite)
-    }, collection, environment, iterations);
-    summaries.push(summary);
-  };
+    for (const suite of suites) {
+        const summary = await runnerman(
+            {
+                name: suite,
+                obj: parseJsonFile(suite)
+            },
+            collection,
+            environment,
+            iterations
+        );
+        summaries.push(summary);
+    }
 
-  let exitCode = 0;
+    let exitCode = 0;
 
   if (summaries.some(y => y.run.failures.length > 0)) {
     exitCode = 1
   }
 
-  process.exit(exitCode);
+    process.exit(exitCode);
 })(program);
