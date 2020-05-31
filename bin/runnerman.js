@@ -44,7 +44,7 @@ program
 
     const summaries = [];
 
-    const revolvedPromises = [];
+    const resolveddPromises = [];
 
     if (option.parallelize) {
         for (const suite of suites) {
@@ -59,7 +59,7 @@ program
             );
             summaries.push(summary);
         }
-        Object.assign(revolvedPromises, await awaitLast(summaries, []));
+        Object.assign(resolveddPromises, await awaitLast(summaries, []));
     } else {
         for await (const suite of suites) {
             const summary = await runnerman(
@@ -69,14 +69,15 @@ program
                 },
                 collection,
                 environment,
-                iterations
+                iterations,
+                ['cli']
             );
             summaries.push(summary);
         }
-        Object.assign(revolvedPromises, summaries);
+        Object.assign(resolveddPromises, summaries);
     }
 
-    if (revolvedPromises.some((y) => y.run.failures.length > 0)) {
+    if (resolveddPromises.some((y) => y.run.failures.length > 0)) {
         process.exit(1);
     }
 })(program);
