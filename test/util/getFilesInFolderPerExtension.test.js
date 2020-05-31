@@ -20,16 +20,15 @@ describe('Test -> Util -> getFilesInFolderPerExtension', () => {
         const result = getFilesInFolderPerExtension(path, extension);
 
         expect(result.length).toBe(2);
-    }),
+    });
 
     it('Should return all files suites', () => {
-        const MOCK_FILE_INFO = {
-        };
+        const MOCK_FILE_INFO = {};
 
         require('fs').__setMockFiles(MOCK_FILE_INFO);
 
         const path = '/path/to';
-        const extension = 'suite'
+        const extension = 'suite';
 
         expect(() => {
             getFilesInFolderPerExtension(path, extension);
@@ -38,10 +37,9 @@ describe('Test -> Util -> getFilesInFolderPerExtension', () => {
 
     it('Should return all files suitess', () => {
         const MOCK_FILE_INFO = {
-            '/path/to/file1.suite': 'console.log("file1 contents");',
+            '/path/to/file1.suite': 'console.log("file1 contents");'
         };
 
-        // eslint-disable-next-line no-underscore-dangle
         require('fs').__setMockFiles(MOCK_FILE_INFO);
 
         const path = 'file1.suite';

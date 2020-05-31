@@ -3,8 +3,8 @@
 const { program } = require('commander');
 const { parseJsonFile } = require('../lib/util/parseJsonFile');
 const { getFilesInFolderPerExtension } = require('../lib/util/getFilesInFolderPerExtension');
-const { awaitLast } = require('../lib/util/awaitLast');
 const { runnerman } = require('..');
+const { awaitLast } = require('../lib/util/awaitLast');
 const { version } = require('../package.json');
 
 function collect(value, previous) {
