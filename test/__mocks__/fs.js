@@ -1,4 +1,3 @@
-
 const path = require('path');
 
 const fs = jest.genMockFromModule('fs');
@@ -10,44 +9,43 @@ let mockFiles = Object.create(null);
 let mockFilesStats = Object.create(null);
 
 function __setMockFiles(newMockFiles) {
-  mockFiles = Object.create(null);
-  mockFilesStats = [];
-  for (const file in newMockFiles) {
-    const dir = path.dirname(file);
+    mockFiles = Object.create(null);
+    mockFilesStats = [];
+    for (const file in newMockFiles) {
+        const dir = path.dirname(file);
 
-    if (!mockFiles[dir]) {
-      mockFiles[dir] = [];
+        if (!mockFiles[dir]) {
+            mockFiles[dir] = [];
 
-      var stats = jest.fn(path => path);
-      stats.isFile = jest.fn(() => false);
+            var stats = jest.fn((path) => path);
+            stats.isFile = jest.fn(() => false);
 
-      mockFilesStats[dir] = stats;
+            mockFilesStats[dir] = stats;
+        }
+
+        const name = path.basename(file);
+
+        if (!mockFilesStats[name]) {
+            var stats = jest.fn((path) => path);
+            stats.isFile = jest.fn(() => true);
+
+            mockFilesStats[name] = stats;
+        }
+
+        mockFiles[dir].push(name);
     }
-
-    const name = path.basename(file);
-
-    if (!mockFilesStats[name]) {
-
-      var stats = jest.fn(path => path);
-      stats.isFile = jest.fn(() => true);
-
-      mockFilesStats[name] = stats;
-    }
-
-    mockFiles[dir].push(name);
-  }
 }
 
 function readdirSync(path) {
-  return mockFiles[path] || [];
+    return mockFiles[path] || [];
 }
 
 function existsSync(path) {
-  return mockFiles[path] || mockFilesStats[path];
+    return mockFiles[path] || mockFilesStats[path];
 }
 
 function lstatSync(path) {
-  return mockFilesStats[path]
+    return mockFilesStats[path];
 }
 
 fs.__setMockFiles = __setMockFiles;

@@ -1,48 +1,50 @@
 {
-  "name": "runnerman",
-  "version": "0.1.0",
-  "description": "A simple way test your apis.",
-  "main": "index.js",
-  "bin": {
-    "runnerman": "./bin/runnerman.js"
-  },
-  "scripts": {
-    "test": "jest --coverage || true",
-    "lint": "eslint ."
-  },
-  "author": "Fernando Cesar da Silva <fcgpsjob@gmail.com>",
-  "license": "Apache-2.0",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/FCesar/runnerman"
-  },
-  "dependencies": {
-    "commander": "^5.1.0",
-    "newman": "^5.0.0",
-    "postman-collection": "^3.6.0",
-    "uuid": "^8.0.0"
-  },
-  "devDependencies": {
-    "autofixture": "^1.1.0",
-    "eslint": "^5.12.1",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.19.1",
-    "eslint-plugin-security": "^1.4.0",
-    "jest": "^26.0.1"
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "prettier --write",
-      "git add"
-    ],
-    "*.json": [
-      "prettier --write",
-      "git add"
-    ],
-    "*.md": [
-      "prettier --write",
-      "git add"
-    ]
-  }
+    "name": "runnerman",
+    "version": "0.1.0",
+    "description": "A simple way test your apis.",
+    "main": "index.js",
+    "bin": {
+        "runnerman": "./bin/runnerman.js"
+    },
+    "scripts": {
+        "test": "jest --coverage || true",
+        "lint": "eslint .",
+        "format": "prettier --write '**/*.{js,json,md}'"
+    },
+    "author": "Fernando Cesar da Silva <fcgpsjob@gmail.com>",
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/FCesar/runnerman"
+    },
+    "dependencies": {
+        "commander": "^5.1.0",
+        "newman": "^5.0.0",
+        "postman-collection": "^3.6.0",
+        "uuid": "^8.0.0"
+    },
+    "devDependencies": {
+        "autofixture": "^1.1.0",
+        "eslint": "^5.12.1",
+        "eslint-config-airbnb-base": "^14.0.0",
+        "eslint-plugin-import": "^2.19.1",
+        "eslint-plugin-security": "^1.4.0",
+        "jest": "^26.0.1",
+        "prettier": "2.0.5"
+    },
+    "lint-staged": {
+        "*.js": [
+            "eslint --fix",
+            "prettier --write",
+            "git add"
+        ],
+        "*.json": [
+            "prettier --write",
+            "git add"
+        ],
+        "*.md": [
+            "prettier --write",
+            "git add"
+        ]
+    }
 }
