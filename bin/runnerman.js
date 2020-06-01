@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 const { program } = require('commander');
+const { _ } = require('lodash');
 const { parseJsonFile } = require('../lib/util/parseJsonFile');
 const { getFilesInFolderPerExtension } = require('../lib/util/getFilesInFolderPerExtension');
 const { runnerman } = require('..');
-const { awaitLast } = require('../lib/util/awaitLast');
 const { version } = require('../package.json');
 
 const collect = (value, previous) => previous.concat([value]);
@@ -29,55 +29,16 @@ program
 
     const iterations = parseInt(option.iterations, 10) || 1;
 
-    const items = [];
+    const suites = [];
 
-    for (const item of option.suite) {
-        items.push(getFilesInFolderPerExtension(item, 'suite'));
+    for await (const item of option.suite) {
+        const paths = getFilesInFolderPerExtension(item, 'suite');
+        Object.assign(suites, _.union(suites, suites.concat(paths)));
     }
 
-    await Promise.all(items);
+    const summaries = await runnerman(suites, collection, environment, iterations, undefined, option.parallelize);
 
-    const suites = new Set();
-
-    // TODO:  Verify if exist batter approach
-    items.forEach((element) => element.forEach((x) => suites.add(x)));
-
-    const summaries = [];
-
-    const resolveddPromises = [];
-
-    if (option.parallelize) {
-        for (const suite of suites) {
-            const summary = runnerman(
-                {
-                    name: suite,
-                    obj: parseJsonFile(suite)
-                },
-                collection,
-                environment,
-                iterations
-            );
-            summaries.push(summary);
-        }
-        Object.assign(resolveddPromises, await awaitLast(summaries, []));
-    } else {
-        for await (const suite of suites) {
-            const summary = await runnerman(
-                {
-                    name: suite,
-                    obj: parseJsonFile(suite)
-                },
-                collection,
-                environment,
-                iterations,
-                ['cli']
-            );
-            summaries.push(summary);
-        }
-        Object.assign(resolveddPromises, summaries);
-    }
-
-    if (resolveddPromises.some((y) => y.run.failures.length > 0)) {
+    if (summaries.some((y) => y.run.failures.length > 0)) {
         process.exit(1);
     }
 })(program);
