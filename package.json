@@ -9,7 +9,7 @@
     "scripts": {
         "test": "jest --coverage || true",
         "lint": "eslint .",
-        "format": "prettier --write '**/*.{js,json,md}'"
+        "format": "prettier-eslint --write '**/*.{js,json,md}'"
     },
     "author": "Fernando Cesar da Silva <fcgpsjob@gmail.com>",
     "license": "Apache-2.0",
@@ -21,6 +21,7 @@
         "commander": "^5.1.0",
         "newman": "^5.0.0",
         "postman-collection": "^3.6.0",
+        "prettier-eslint-cli": "^5.0.0",
         "uuid": "^8.0.0"
     },
     "devDependencies": {
@@ -43,7 +44,7 @@
     "lint-staged": {
         "*.js": [
             "eslint --fix",
-            "prettier --write",
+            "prettier-eslint --write",
             "git add"
         ],
         "*.json": [
