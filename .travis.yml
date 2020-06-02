@@ -1,0 +1,19 @@
+xlanguage: node_js
+
+os:
+  - linux
+  - windows
+  - osx
+node_js:
+  - '10'
+  - '12'
+
+jobs:
+  include:
+    - name: 'Coverage'
+      node_js: stable
+      os: linux
+      script:
+        - npm run test
+        - bash <(curl -s https://codecov.io/bash) -c -Z -f .coverage/coverage-final.json -F unit
+
