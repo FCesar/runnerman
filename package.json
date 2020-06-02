@@ -53,10 +53,6 @@
         "*.md": [
             "prettier --write",
             "git add"
-        ],
-        "README.md": [
-            "name=$(git rev-parse --abbrev-ref HEAD) sed -i \"s|master|${name}|g\" README.md",
-            "git add"
         ]
     }
 }
