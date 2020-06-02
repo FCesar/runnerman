@@ -9,7 +9,7 @@
     "scripts": {
         "test": "jest --coverage || true",
         "lint": "eslint .",
-        "format": "prettier --write '**/*.{js,json,md}'"
+        "format": "prettier-eslint --write '**/*.{js,json,md}'"
     },
     "author": "Fernando Cesar da Silva <fcgpsjob@gmail.com>",
     "license": "Apache-2.0",
@@ -22,6 +22,7 @@
         "lodash": "^4.17.15",
         "newman": "^5.0.0",
         "postman-collection": "^3.6.0",
+        "prettier-eslint-cli": "^5.0.0",
         "uuid": "^8.0.0"
     },
     "devDependencies": {
@@ -30,22 +31,27 @@
         "eslint-config-airbnb-base": "^14.0.0",
         "eslint-plugin-import": "^2.19.1",
         "eslint-plugin-security": "^1.4.0",
+        "husky": "^4.2.5",
         "jest": "^26.0.1",
+        "lint-staged": "^10.2.7",
         "prettier": "2.0.5"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged",
+            "pre-push": "npm run-script test"
+        }
     },
     "lint-staged": {
         "*.js": [
             "eslint --fix",
-            "prettier --write",
-            "git add"
+            "prettier-eslint --write"
         ],
         "*.json": [
-            "prettier --write",
-            "git add"
+            "prettier --write"
         ],
         "*.md": [
-            "prettier --write",
-            "git add"
+            "prettier --write"
         ]
     }
 }
