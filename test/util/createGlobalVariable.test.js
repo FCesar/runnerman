@@ -1,5 +1,5 @@
-const { createGlobalVariable } = require('../../lib/util/createGlobalVariable');
 const { Variable } = require('postman-collection');
+const { createGlobalVariable } = require('../../lib/util/createGlobalVariable');
 
 describe('Test -> Util -> createGlobalVariable', () => {
     it('Should add new global variables', () => {
@@ -8,18 +8,18 @@ describe('Test -> Util -> createGlobalVariable', () => {
         };
 
         const runSummary = {
-            "globals" : {
-                "values" : {
-                    "members" : [
+            globals: {
+                values: {
+                    members: [
                         new Variable({
-                            "key": "Ping",
-                            "type": "any",
-                            value: { "code": 200, "map": ["b"] }
+                            key: 'Ping',
+                            type: 'any',
+                            value: { code: 200, map: ['b'] }
                         }),
                         new Variable({
-                            "key": "HealthCheck",
-                            "type": "any",
-                            value: { "code": 200 }
+                            key: 'HealthCheck',
+                            type: 'any',
+                            value: { code: 200 }
                         })
                     ]
                 }
@@ -38,24 +38,23 @@ describe('Test -> Util -> createGlobalVariable', () => {
     });
 
     it('Should not add new global variables', () => {
-
         const responseBody = {
-            "b" : "c"
+            b: 'c'
         };
 
         const runSummary = {
-            "globals" : {
-                "values" : {
-                    "members" : [
+            globals: {
+                values: {
+                    members: [
                         new Variable({
-                            "key": "Ping",
-                            "type": "any",
-                            value: { "code": 200, "map": ["b"] }
+                            key: 'Ping',
+                            type: 'any',
+                            value: { code: 200, map: ['b'] }
                         }),
                         new Variable({
-                            "key": "HealthCheck",
-                            "type": "any",
-                            value: { "code": 200 }
+                            key: 'HealthCheck',
+                            type: 'any',
+                            value: { code: 200 }
                         })
                     ]
                 }
@@ -69,27 +68,26 @@ describe('Test -> Util -> createGlobalVariable', () => {
         const result = createGlobalVariable(responseBody, position, runSummary);
 
         expect(result.globals.values.members).toEqual(expected);
-    })
+    });
 
     it('Should not add new global variables response not contain map item', () => {
-
         const responseBody = {
-            "b" : "c"
+            b: 'c'
         };
 
         const runSummary = {
-            "globals" : {
-                "values" : {
-                    "members" : [
+            globals: {
+                values: {
+                    members: [
                         new Variable({
-                            "key": "Ping",
-                            "type": "any",
-                            value: { "code": 200, "map": ["b"] }
+                            key: 'Ping',
+                            type: 'any',
+                            value: { code: 200, map: ['b'] }
                         }),
                         new Variable({
-                            "key": "HealthCheck",
-                            "type": "any",
-                            value: { "code": 200, "map": ["c"] }
+                            key: 'HealthCheck',
+                            type: 'any',
+                            value: { code: 200, map: ['c'] }
                         })
                     ]
                 }
@@ -103,7 +101,7 @@ describe('Test -> Util -> createGlobalVariable', () => {
         const result = createGlobalVariable(responseBody, position, runSummary);
 
         expect(result.globals.values.members).toEqual(expected);
-    })
+    });
 
     it('Should update global variables', () => {
         const responseBody = {
@@ -111,18 +109,18 @@ describe('Test -> Util -> createGlobalVariable', () => {
         };
 
         const runSummary = {
-            "globals" : {
-                "values" : {
-                    "members" : [
+            globals: {
+                values: {
+                    members: [
                         new Variable({
-                            "key": "Ping",
-                            "type": "any",
-                            value: { "code": 200, "map": ["b"] }
+                            key: 'Ping',
+                            type: 'any',
+                            value: { code: 200, map: ['b'] }
                         }),
                         new Variable({
-                            "key": "b",
-                            "type": "any",
-                            value: "d"
+                            key: 'b',
+                            type: 'any',
+                            value: 'd'
                         })
                     ]
                 }
@@ -133,7 +131,7 @@ describe('Test -> Util -> createGlobalVariable', () => {
 
         const expected = Object.assign([], runSummary.globals.values.members);
 
-        const a = Object.assign({}, expected.filter((x) => x.key === 'b')[0]);
+        const a = { ...expected.filter(x => x.key === 'b')[0] };
         a.value = 'c';
 
         expected.splice(expected.indexOf(a), 1);
