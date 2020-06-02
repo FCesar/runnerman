@@ -2,6 +2,9 @@
 
 ---
 
+[![Build Status](https://travis-ci.com/FCesar/runnerman.svg?branch=feature%2Fadd-ci-and-codecov)](https://travis-ci.com/FCesar/runnerman)
+[![codecov](https://codecov.io/gh/FCesar/runnerman/branch/feature%2Fadd-ci-and-codecov/graph/badge.svg)](https://codecov.io/gh/FCesar/runnerman)
+
 A simple way test your apis.
 
 ### Command
