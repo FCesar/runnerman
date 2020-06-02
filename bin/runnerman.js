@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
+const { program } = require('commander');
 const { parseJsonFile } = require('../lib/util/parseJsonFile');
 const { getFilesInFolderPerExtension } = require('../lib/util/getFilesInFolderPerExtension');
 const { runnerman } = require('..');
-const { program } = require('commander');
 const { version } = require('../package.json');
 
 program
@@ -14,22 +14,22 @@ program
     .option('-i, --iterations <type>')
     .parse(process.argv);
 
-(async function main(program) {
-    if (program.collection === '' || program.environment === '' || program.suite === '') {
-        program.help();
+(async function main(option) {
+    if (option.collection === '' || option.environment === '' || option.suite === '') {
+        option.help();
     }
 
-    const collection = parseJsonFile(program.collection);
+    const collection = parseJsonFile(option.collection);
 
-    const environment = program.environment !== undefined && parseJsonFile(program.environment);
+    const environment = option.environment !== undefined && parseJsonFile(option.environment);
 
-    const iterations = parseInt(program.iterations) || 1;
+    const iterations = parseInt(option.iterations, 10) || 1;
 
-    const suites = getFilesInFolderPerExtension(program.suite, 'suite');
+    const suites = getFilesInFolderPerExtension(option.suite, 'suite');
 
     const summaries = [];
 
-    for (const suite of suites) {
+    for await (const suite of suites) {
         const summary = await runnerman(
             {
                 name: suite,
@@ -42,9 +42,7 @@ program
         summaries.push(summary);
     }
 
-    let exitCode = 0;
-
-    if (summaries.some((x) => x.run.failures.length > 0)) exitCode = 1;
-
-    process.exit(exitCode);
-})(program);
+    if (summaries.some(x => x.run.failures.length > 0)) {
+        process.exit(1);
+    }
+}(program));
