@@ -1,3 +1,5 @@
+/* eslint-disable global-require */
+/* eslint-disable no-underscore-dangle */
 // TODO: Remove eslint-disable no-unused-expressions soon is possible
 /* eslint-disable no-unused-expressions */
 const { getFilesInFolderPerExtension } = require('../../lib/util/getFilesInFolderPerExtension');
