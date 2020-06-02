@@ -38,7 +38,7 @@ program
 
     const summaries = await runnerman(suites, collection, environment, iterations, undefined, option.parallelize);
 
-    if (summaries.some((y) => y.run.failures.length > 0)) {
+    if (summaries.some(y => y.run.failures.length > 0)) {
         process.exit(1);
     }
-})(program);
+}(program));
