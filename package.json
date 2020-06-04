@@ -19,6 +19,7 @@
     },
     "dependencies": {
         "commander": "^5.1.0",
+        "lodash": "^4.17.15",
         "newman": "^5.0.0",
         "postman-collection": "^3.6.0",
         "uuid": "^8.0.0"
@@ -36,7 +37,7 @@
     },
     "husky": {
         "hooks": {
-            "pre-commit": "lint-staged",
+            "pre-commit": "node lib/util/replaceFile.js README.md master g \"$(git rev-parse --abbrev-ref HEAD)\" && lint-staged",
             "pre-push": "npm run-script test"
         }
     },
