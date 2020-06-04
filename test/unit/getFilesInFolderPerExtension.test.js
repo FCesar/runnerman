@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable global-require */
 const { getFilesInFolderPerExtension } = require('../../lib/util/getFilesInFolderPerExtension');
 
 jest.mock('fs');
@@ -18,19 +20,20 @@ describe('Test -> Util -> getFilesInFolderPerExtension', () => {
         const result = getFilesInFolderPerExtension(path, extension);
 
         expect(result.length).toBe(2);
-    }),
-        it('Should return all files suites', () => {
-            const MOCK_FILE_INFO = {};
+    });
 
-            require('fs').__setMockFiles(MOCK_FILE_INFO);
+    it('Should return all files suites', () => {
+        const MOCK_FILE_INFO = {};
 
-            const path = '/path/to';
-            const extension = 'suite';
+        require('fs').__setMockFiles(MOCK_FILE_INFO);
 
-            expect(() => {
-                getFilesInFolderPerExtension(path, extension);
-            }).toThrow();
-        });
+        const path = '/path/to';
+        const extension = 'suite';
+
+        expect(() => {
+            getFilesInFolderPerExtension(path, extension);
+        }).toThrow();
+    });
 
     it('Should return all files suitess', () => {
         const MOCK_FILE_INFO = {

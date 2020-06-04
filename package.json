@@ -6,8 +6,26 @@
     "bin": {
         "runnerman": "./bin/runnerman.js"
     },
+    "jest": {
+        "collectCoverage": true,
+        "collectCoverageFrom": [
+            "**/*.{js,jsx}",
+            "!**/node_modules/**",
+            "!**/vendor/**"
+        ],
+        "verbose": true,
+        "coverageThreshold": {
+            "global": {
+                "branches": 80,
+                "functions": 80,
+                "lines": 80,
+                "statements": 80
+            }
+        }
+    },
     "scripts": {
-        "test": "jest --coverage || true",
+        "test-unit": "jest --coverage test/unit || true",
+        "test-cli": "jest --coverage test/cli || true",
         "lint": "eslint .",
         "format": "prettier-eslint --write '**/*.{js,json,md}'"
     },
@@ -33,6 +51,7 @@
         "husky": "^4.2.5",
         "jest": "^26.0.1",
         "lint-staged": "^10.2.7",
+        "nyc": "^15.1.0",
         "prettier": "2.0.5"
     },
     "husky": {
