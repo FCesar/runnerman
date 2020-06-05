@@ -6,23 +6,24 @@ const { getFilesInFolderPerExtension } = require('../lib/util/getFilesInFolderPe
 const { runnerman } = require('..');
 const { version } = require('../package.json');
 
-const main = async option => {
-    program
-        .version(version)
-        .option('-c, --collection <type>')
-        .option('-e, --environment <type>')
-        .option('-s, --suite <type>')
-        .option('-i, --iterations <type>')
-        .parse(process.argv);
+const collect = (value, previous) => previous.concat([value]);
 
+program
+    .version(version)
+    .option('-c, --collection <type>')
+    .option('-e, --environment <type>')
+    .option('-s, --suite <value>', '', collect, [])
+    .option('-i, --iterations <type>')
+    .parse(process.argv);
+
+async function main(option) {
     if (
-        option.collection === undefined ||
-        option.collection === '' ||
-        option.environment === '' ||
-        option.suite === undefined ||
-        option.suite === ''
+        program.collection === '' ||
+        program.environment === '' ||
+        program.suite === undefined ||
+        program.suite.length === 0
     ) {
-        option.help();
+        program.help();
     }
 
     const collection = await parseJsonFile(option.collection);
@@ -31,7 +32,12 @@ const main = async option => {
 
     const iterations = parseInt(option.iterations, 10) || 1;
 
-    const suites = await getFilesInFolderPerExtension(option.suite, 'suite');
+    const suites = new Set();
+
+    for await (const item of program.suite) {
+        const items = await getFilesInFolderPerExtension(item, 'suite');
+        items.forEach(x => suites.add(x));
+    }
 
     const summaries = [];
 
@@ -48,10 +54,14 @@ const main = async option => {
         summaries.push(summary);
     }
 
-    const exitCode = summaries.some(x => x.run.failures.length > 0) ? 1 : 0;
+    let exitCode = 0;
+
+    if (summaries.some(y => y.run.failures.length > 0)) {
+        exitCode = 1;
+    }
 
     process.exit(exitCode);
-};
+}
 
 // Main call
 (async () => {
