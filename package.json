@@ -19,6 +19,7 @@
     },
     "dependencies": {
         "commander": "^5.1.0",
+        "lodash": "^4.17.15",
         "newman": "^5.0.0",
         "postman-collection": "^3.6.0",
         "prettier-eslint-cli": "^5.0.0",
@@ -37,8 +38,9 @@
     },
     "husky": {
         "hooks": {
-            "pre-commit": "lint-staged",
-            "pre-push": "npm run-script test"
+            "pre-commit": "node lib/util/replaceFile.js README.md master g \"$(git rev-parse --abbrev-ref HEAD)\" && git add README.md && lint-staged",
+            "pre-push": "npm run-script test",
+            "pre-merge-commit": "node lib/util/replaceFile.js README.md \"$(git rev-parse --abbrev-ref HEAD)\" g master && git add README.md"
         }
     },
     "lint-staged": {

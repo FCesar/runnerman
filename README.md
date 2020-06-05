@@ -1,6 +1,7 @@
 # Runnerman
 
----
+[![Build Status](https://travis-ci.com/FCesar/runnerman.svg?branch=feature/add-ci-and-codecov)](https://travis-ci.com/FCesar/runnerman)
+[![codecov](https://codecov.io/gh/FCesar/runnerman/branch/feature/add-ci-and-codecov/graph/badge.svg)](https://codecov.io/gh/FCesar/runnerman)
 
 A simple way test your apis.
 
