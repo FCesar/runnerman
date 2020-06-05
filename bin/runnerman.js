@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const { program } = require('commander');
-const { _ } = require('lodash');
+const { union } = require('lodash');
 const { parseJsonFile } = require('../lib/util/parseJsonFile');
 const { getFilesInFolderPerExtension } = require('../lib/util/getFilesInFolderPerExtension');
 const { runnerman } = require('..');
@@ -33,7 +33,7 @@ program
 
     for await (const item of option.suite) {
         const paths = getFilesInFolderPerExtension(item, 'suite');
-        Object.assign(suites, _.union(suites, suites.concat(paths)));
+        Object.assign(suites, union(suites, suites.concat(paths)));
     }
 
     const summaries = await runnerman(suites, collection, environment, iterations, undefined, option.parallelize);
