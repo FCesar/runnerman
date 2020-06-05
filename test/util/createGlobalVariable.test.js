@@ -1,5 +1,5 @@
-const { createGlobalVariable } = require('../../lib/util/createGlobalVariable');
 const { Variable } = require('postman-collection');
+const { createGlobalVariable } = require('../../lib/util/createGlobalVariable');
 
 describe('Test -> Util -> createGlobalVariable', () => {
     it('Should add new global variables', () => {
@@ -65,7 +65,7 @@ describe('Test -> Util -> createGlobalVariable', () => {
 
         const expected = Object.assign([], runSummary.globals.values.members);
 
-        const a = Object.assign({}, expected.filter((x) => x.key === 'b')[0]);
+        const a = { ...expected.filter(x => x.key === 'b')[0] };
         a.value = 'c';
 
         expected.splice(expected.indexOf(a), 1);
