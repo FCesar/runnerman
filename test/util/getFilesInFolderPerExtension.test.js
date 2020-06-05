@@ -21,7 +21,7 @@ describe('Test -> Util -> getFilesInFolderPerExtension', () => {
         const extension = 'suite';
         const result = getFilesInFolderPerExtension(path, extension);
 
-        expect(result.length).toBe(2);
+        expect(result).toEqual(['/path/to/suite1.suite', '/path/to/suite2.suite']);
     });
 
     it('Should return all files suites', () => {
@@ -48,6 +48,6 @@ describe('Test -> Util -> getFilesInFolderPerExtension', () => {
         const extension = 'suite';
         const result = getFilesInFolderPerExtension(path, extension);
 
-        expect(result.length).toBe(1);
+        expect(result).toEqual(['file1.suite']);
     });
 });
