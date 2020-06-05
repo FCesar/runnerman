@@ -38,7 +38,8 @@
     "husky": {
         "hooks": {
             "pre-commit": "node lib/util/replaceFile.js README.md master g \"$(git rev-parse --abbrev-ref HEAD)\" && git add README.md && lint-staged",
-            "pre-push": "npm run-script test"
+            "pre-push": "npm run-script test",
+            "pre-merge-commit": "node lib/util/replaceFile.js README.md \"$(git rev-parse --abbrev-ref HEAD)\" g master && git add README.md"
         }
     },
     "lint-staged": {
